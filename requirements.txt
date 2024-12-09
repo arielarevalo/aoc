@@ -1,0 +1,5 @@
+requests
+nbformat
+python-dotenv
+
+pandas
