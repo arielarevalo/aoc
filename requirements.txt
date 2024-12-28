@@ -1,5 +1,9 @@
 requests
 nbformat
 python-dotenv
-
+tqdm
+networkx
 pandas
+opencv-python
+scikit-image
+shapely
