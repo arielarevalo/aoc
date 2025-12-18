@@ -59,31 +59,39 @@ def create_jupyter_notebook(day):
 
 
 def main():
-    # Only fetch up to today's date, or day 25 whichever is smaller
-    for day in range(1, min(26, CURRENT_DAY + 1)):
+    day = 1
+    while True:
         day_dir = os.path.join(ROOT_DIR, str(day))
         input_file = os.path.join(day_dir, "input.txt")
 
-        # Ensure directories exist
+        # Ensure root directory exists
         ensure_directory(ROOT_DIR)
-        ensure_directory(day_dir)
 
         # Get input if not already fetched
         if not os.path.exists(input_file):
             try:
                 print(f"Fetching input for Day {day}...")
                 input_data = fetch_input(day)
+                
+                # Only create directory if fetch succeeds
+                ensure_directory(day_dir)
                 with open(input_file, "w") as f:
                     f.write(input_data)
             except requests.HTTPError as e:
+                if e.response.status_code == 404:
+                    print(f"Day {day}: Puzzle not available (404). Stopping.")
+                    break
                 print(f"Day {day}: Unable to fetch input. Error: {e}")
                 continue
 
         # Create Jupyter notebook if not existing
         notebook_path = os.path.join(day_dir, "answer.ipynb")
         if not os.path.exists(notebook_path):
+            ensure_directory(day_dir)
             print(f"Building notebook for Day {day}...")
             create_jupyter_notebook(day)
+        
+        day += 1
 
 
 if __name__ == "__main__":
